@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ page.title }}</title>
+    
+    <!-- Add Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Add Masonry and imagesloaded CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/masonry-layout@4.2.2/dist/masonry.pkgd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/imagesloaded@4.1.4/imagesloaded.pkgd.min.js"></script>
+
+    <!-- Additional CSS for improved styling -->
+    <style>
+        body {
+            padding-top: 60px; /* Add space for the fixed navbar */
+        }
+
+        .navbar {
+            margin-bottom: 20px; /* Add space below the navbar */
+        }
+
+        .grid-item {
+            width: 33.33%; /* Allow multiple columns */
+            float: left;
+            padding: 5px;
+        }
+
+        .grid-item img {
+            max-width: 100%; /* Adjust maximum width */
+            height: auto;
+            cursor: pointer;
+            transition: transform 0.2s; /* Add transition for zoom effect */
+        }
+
+        .overlay {
+            display: none;
+            position: absolute;
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 10px;
+            bottom: 0;
+            width: 100%;
+            text-align: center;
+            transition: opacity 0.2s; /* Add transition for fade effect */
+        }
+
+        /* Center-align title and navigation */
+        .navbar-brand {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding-top: 10px; /* Add some top padding to center-align */
+        }
+
+        .navbar-toggler {
+            margin-right: 15px;
+        }
+
+        .navbar-nav {
+            margin-left: auto;
+        }
+
+        /* Style for content from Markdown files */
+        .markdown-content {
+            margin-top: 20px; /* Add margin to separate content from gallery */
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top"> <!-- Add 'fixed-top' class to fix navbar at the top -->
+            <a class="navbar-brand" href="/">{{ site.title }}</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/about.html">About</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/posts.html">Posts</a>
+                    </li>
+                    {% for link in site.social_links %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ link.url }}">{{ link.name }}</a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </nav>
+    </header>
+    <main class="container mt-5"> <!-- Add margin-top for content -->
+        <div class="row">
+            <div class="col-md-12">
+                <div class="gallery">
+                    <div class="grid">
+                        {% for photo in site.static_files %}
+                            {% if photo.path contains 'gallery/' %}
+                                <div class="grid-item">
+                                    <img src="{{ photo.path }}" alt="{{ photo.name }}" data-toggle="modal" data-target="#imageModal" data-image="{{ photo.path }}" data-title="{{ photo.name | split:'=' | first }}" data-description="{{ photo.name | split:'=' | last | split:'.' | first }}">
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Include About and Index contents -->
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col-md-12 markdown-content"> <!-- Add class for styling content -->
+                {{ content }}
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap Modal -->
+    <div class="modal fade" id="imageModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel"></h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <img src="" alt="" style="max-width: 100%; height: auto;">
+                    <p class="modal-description"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Masonry Initialization Script -->
+    <script>
+        var grid = document.querySelector('.grid');
+        var msnry = new Masonry(grid, {
+            itemSelector: '.grid-item',
+            columnWidth: '.grid-item',
+            percentPosition: true
+        });
+
+        imagesLoaded(grid).on('progress', function () {
+            msnry.layout();
+        });
+
+        // JavaScript to populate Bootstrap modal with clicked image and description
+        var modal = document.getElementById('imageModal');
+        var modalTitle = modal.querySelector('.modal-title');
+        var modalImage = modal.querySelector('.modal-body img');
+        var modalDescription = modal.querySelector('.modal-description');
+
+        var images = document.querySelectorAll('.grid-item img');
+
+        images.forEach(function (image) {
+            image.addEventListener('click', function () {
+                var imageUrl = this.getAttribute('data-image');
+                var imageTitle = this.getAttribute('data-title');
+                var imageDescription = this.getAttribute('data-description');
+
+                modalTitle.innerText = imageTitle;
+                modalImage.src = imageUrl;
+                modalDescription.innerText = imageDescription;
+            });
+        });
+    </script>
+
+    <!-- Add Bootstrap JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
