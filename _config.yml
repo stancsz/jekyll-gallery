@@ -24,7 +24,7 @@ description: >-
   Welcome to Megan Li's personal website. Explore my portfolio, artistic endeavors,
   and insights into my creative journey. Stay updated with my latest projects and thoughts.
 baseurl: "" # the subpath of your site, e.g. /blog
-url: "" # the base hostname & protocol for your site, e.g. http://example.com
+url: "meganlyc.github.io" # the base hostname & protocol for your site, e.g. http://example.com
 # twitter_username: jekyllrb # Update this with your twitter username if available
 github_username:  meganlyc # Update this with your github username if available
 instagram_username: cheungyeon
